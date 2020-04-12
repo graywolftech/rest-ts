@@ -1,0 +1,32 @@
+{
+  "name": "typed-api",
+  "version": "0.1.0",
+  "description": "The typed-api type spec.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsmith/typed-api.git"
+  },
+  "keywords": [
+    "typescript",
+    "ts",
+    "rest",
+    "api",
+    "restyped"
+  ],
+  "author": "Jacob Smith <jacob.smith@unb.ca>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsmith/typed-api/issues"
+  },
+  "homepage": "https://github.com/jsmith/typed-api#readme",
+  "devDependencies": {
+    "axios": "^0.19.2",
+    "io-ts": "^2.1.3"
+  },
+  "peerDependencies": {
+    "axios": "^0.19.2",
+    "io-ts": "^2.1.3"
+  }
+}

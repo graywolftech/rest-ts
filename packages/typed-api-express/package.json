@@ -1,0 +1,41 @@
+{
+  "name": "typed-api-express",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "check:all": "npm run check:types && npm run check:lint && npm run check:style",
+    "check:types": "tsc",
+    "check:lint": "eslint \"**/*.{ts,tsx,js}\"",
+    "check:style": "prettier --list-different \"**/*.{ts,tsx,js}\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsmith/typed-api.git"
+  },
+  "keywords": [
+    "typescript",
+    "ts",
+    "rest",
+    "api",
+    "restyped"
+  ],
+  "author": "Jacob Smith <jacob.smith@unb.ca>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsmith/typed-api/issues"
+  },
+  "homepage": "https://github.com/jsmith/typed-api#readme",
+  "dependencies": {
+    "typed-api": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.6",
+    "express": "^4.17.1"
+  },
+  "peerDependencies": {
+    "express": "^4.17.1"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "typed-api-axios",
+  "name": "rest-ts-express",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jsmith/typed-api.git"
+    "url": "git+https://github.com/jsmith/rest-ts.git"
   },
   "keywords": [
     "typescript",
@@ -25,16 +25,17 @@
   "author": "Jacob Smith <jacob.smith@unb.ca>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jsmith/typed-api/issues"
+    "url": "https://github.com/jsmith/rest-ts/issues"
   },
-  "homepage": "https://github.com/jsmith/typed-api#readme",
+  "homepage": "https://github.com/jsmith/rest-ts#readme",
   "dependencies": {
-    "typed-api": "0.1.0"
+    "rest-ts": "0.1.0"
   },
   "devDependencies": {
-    "axios": "^0.19.2"
+    "@types/express": "^4.17.6",
+    "express": "^4.17.1"
   },
   "peerDependencies": {
-    "axios": "^0.19.2"
+    "express": "^4.17.1"
   }
 }

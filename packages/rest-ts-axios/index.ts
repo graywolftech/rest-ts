@@ -1,5 +1,4 @@
 import axios, {
-  AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
   CancelStatic,
@@ -7,31 +6,31 @@ import axios, {
   Method,
 } from "axios";
 
-import { RestypedIndexedBase, RestypedRoute, NeverOr, NeverIfUnknown } from "typed-api";
+import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "rest-ts";
 
 export interface TypedAxiosRequestConfig<
-  API extends RestypedIndexedBase,
+  API extends RestTSBase,
   Path extends Extract<keyof API, string>,
   Type extends Extract<keyof API[Path], Method>,
-  RouteDef extends RestypedRoute = API[Path][Type]
+  RouteDef extends RestTSRoute = API[Path][Type]
 > extends AxiosRequestConfig {
   url?: Type;
-  method?: Method;
+  method?: Type;
   params?: NeverIfUnknown<RouteDef["query"]>;
   data?: NeverIfUnknown<RouteDef["body"]>;
 }
 
 export interface TypedAxiosResponse<
-  API extends RestypedIndexedBase,
+  API extends RestTSBase,
   Path extends Extract<keyof API, string>,
   Type extends Extract<keyof API[Path], Method>,
-  RouteDef extends RestypedRoute = API[Path][Method]
+  RouteDef extends RestTSRoute = API[Path][Type]
 > extends AxiosResponse {
   data: RouteDef["response"];
   config: TypedAxiosRequestConfig<API, Path, Type>;
 }
 
-export interface TypedAxiosInstance<API extends RestypedIndexedBase> {
+export interface TypedAxiosInstance<API extends RestTSBase> {
   request<Path extends Extract<keyof API, string>, Type extends Extract<keyof API[Path], Method>>(
     config: TypedAxiosRequestConfig<API, Path, Type>,
   ): Promise<TypedAxiosResponse<API, Path, Type>>;
@@ -64,8 +63,8 @@ export interface TypedAxiosInstance<API extends RestypedIndexedBase> {
     Path extends Extract<keyof API, string>,
     Type extends Extract<keyof API[Path], Method> & "POST"
   >(
-    url: NeverOr<Path, Type>,
-    data?: API[Path]["POST"]["body"],
+    url: NeverOr<Type, Path>,
+    data?: API[Path][Type]["body"],
     config?: TypedAxiosRequestConfig<API, Path, Type>,
   ): Promise<TypedAxiosResponse<API, Path, Type>>;
 
@@ -74,7 +73,7 @@ export interface TypedAxiosInstance<API extends RestypedIndexedBase> {
     Type extends Extract<keyof API[Path], Method> & "PUT"
   >(
     url: NeverOr<Type, Path>,
-    data?: API[Path]["PUT"]["body"],
+    data?: API[Path][Type]["body"],
     config?: TypedAxiosRequestConfig<API, Path, Type>,
   ): Promise<TypedAxiosResponse<API, Path, Type>>;
 
@@ -83,13 +82,13 @@ export interface TypedAxiosInstance<API extends RestypedIndexedBase> {
     Type extends Extract<keyof API[Path], Method> & "PATCH"
   >(
     url: NeverOr<Type, Path>,
-    data?: API[Path]["PATCH"]["body"],
+    data?: API[Path][Type]["body"],
     config?: TypedAxiosRequestConfig<API, Path, Type>,
   ): Promise<TypedAxiosResponse<API, Path, Type>>;
 }
 
 export interface TypedAxiosStatic extends TypedAxiosInstance<any> {
-  create<T extends RestypedIndexedBase>(config?: AxiosRequestConfig): TypedAxiosInstance<T>;
+  create<T extends RestTSBase>(config?: AxiosRequestConfig): TypedAxiosInstance<T>;
   Cancel: CancelStatic;
   CancelToken: CancelTokenStatic;
   isCancel(value: any): boolean;
@@ -99,7 +98,7 @@ export interface TypedAxiosStatic extends TypedAxiosInstance<any> {
 
 const TypedAxios: TypedAxiosStatic = axios;
 
-const t = TypedAxios.create<{ "/test": { GET: { body: { id: string } } } }>({});
+// const t = TypedAxios.create<{ "/test": { GET: { body: { id: string } } } }>({});
 // t.get("/test", {
 //   data: {
 //     id: "",
@@ -111,5 +110,55 @@ const t = TypedAxios.create<{ "/test": { GET: { body: { id: string } } } }>({});
 //     id: "",
 //   },
 // });
+
+// export type API = {
+//   "/plant-potato": {
+//     POST: {
+//       body: { size: number; weight: number };
+//       response: { result: "one-potato" | "two-potato" };
+//     };
+//   };
+// };
+
+// type T = TypedAxiosResponse<API, "/plant-potato", "POST">;
+
+// interface User {
+//   email: string;
+//   name: string;
+// }
+
+// export type SocialAPI =  {
+//   "/users": {
+//     // Route name (without prefix, if you have one)
+//     GET: {
+//       // Any valid HTTP method
+//       query: {
+//         // Query string params (e.g. /me?includeProfilePics=true)
+//         includeProfilePics?: boolean;
+//       };
+//       response: User[]; // JSON response
+//     };
+//   };
+
+//   "/user/:id/send-message": {
+//     POST: {
+//       params: {
+//         // Inline route params
+//         id: string;
+//       };
+//       body: {
+//         // JSON request body
+//         message: string;
+//       };
+//       response: {
+//         // JSON response
+//         success: boolean;
+//       };
+//     };
+//   };
+// }
+
+// const client = TypedAxios.create<SocialAPI>({ baseURL: '' });
+// client.post("/user/12345/send-message" as "/user/:id/send-message", { message: "some message" });
 
 export default TypedAxios;

@@ -1,19 +1,17 @@
 {
-  "name": "rest-ts-axios",
+  "name": "@graywolf/rest-ts-axios",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "check:all": "npm run check:types && npm run check:lint && npm run check:style",
-    "check:types": "tsc",
-    "check:lint": "eslint \"**/*.{ts,tsx,js}\"",
-    "check:style": "prettier --list-different \"**/*.{ts,tsx,js}\"",
+    "build": "npx tsc --outDir dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jsmith/rest-ts.git"
+    "url": "git+https://github.com/graywolf/rest-ts.git"
   },
   "keywords": [
     "typescript",
@@ -25,14 +23,15 @@
   "author": "Jacob Smith <jacob.smith@unb.ca>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jsmith/rest-ts/issues"
+    "url": "https://github.com/graywolf/rest-ts/issues"
   },
-  "homepage": "https://github.com/jsmith/rest-ts#readme",
+  "homepage": "https://github.com/graywolf/rest-ts#readme",
   "dependencies": {
-    "rest-ts": "0.1.0"
+    "@graywolf/rest-ts": "0.1.0"
   },
   "devDependencies": {
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "typescript": "^3.8.3"
   },
   "peerDependencies": {
     "axios": "^0.19.2"

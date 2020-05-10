@@ -1,11 +1,9 @@
 # rest-ts
-
 End-to-end REST API typings using TypeScript.
 
-> Original idea taken from @rawrmaan [restyped](https://github.com/rawrmaan/restyped). This library offers stricter type checking and updated dependencies.
+> Original idea taken from @rawrmaan [restyped](https://github.com/rawrmaan/restyped). This library offers stricter type checking and updated dependencies. Eventually, it will also incorporate [`io-ts`](https://github.com/gcanti/io-ts) for automatic boundary type-checking.
 
 ## The Idea
-
 Define your REST API such that it can be consumed by your frontend and backend. Use simple type wrappers around client libraries such as [axios](https://github.com/axios/axios) and router libraries such as [express](https://expressjs.com/) which consume your API definition and then type check your requests / route definitions.
 
 The API definition would look something like this:
@@ -59,7 +57,6 @@ response.data.result === "three-potato";
 ```
 
 ## Why use Type REST?
-
 > **End-to-end typing**: Share request and response types between your client and server for ease of use and peace of mind.  
 > **Unopinionated**: Works with any new or existing REST API.  
 > **Universal**: Can support any server framework or REST client.  
@@ -72,7 +69,6 @@ response.data.result === "three-potato";
 Quote taken from [restyped](https://github.com/rawrmaan/restyped#benefits).
 
 ## Installation & Usage
-
 This will talk you through the steps to install and use `rest-ts`. Note that there are examples below after you complete these steps.
 
 1. Make sure your TypeScript version is at least `3.0` as the `unknown` type is used.
@@ -85,13 +81,13 @@ export type RestAPI = {
 };
 ```
 
-3. Install [`rest-ts-express`](http://npmjs.com/package/rest-ts-express) in your backend.
+3. Install [`@graywolf/rest-ts-express`](http://npmjs.com/package/@graywolf/rest-ts-express) in your backend.
 
 ```shell
-npm install --save rest-ts-express express
+npm install --save @graywolf/rest-ts-express express
 ```
 
-Note: [`express`](https://www.npmjs.com/package/express) is a peer dependency.
+> Note: [`express`](https://www.npmjs.com/package/express) is a peer dependency.
 
 4. Import and create your `express` app.
 
@@ -107,13 +103,13 @@ app.get("/some/route", async (req) => {
 });
 ```
 
-5. Install [`rest-ts-axios`](http://npmjs.com/package/rest-ts-axios) in your frontend.
+5. Install [`@graywolf/rest-ts-axios`](http://npmjs.com/package/@graywolf/rest-ts-axios) in your frontend.
 
 ```shell
-npm install --save rest-ts-axios axios
+npm install --save @graywolf/rest-ts-axios axios
 ```
 
-Note: [`axios`](https://www.npmjs.com/package/axios) is a peer dependency.
+> Note: [`axios`](https://www.npmjs.com/package/axios) is a peer dependency.
 
 6. Import and create an `axios` instance.
 
@@ -132,10 +128,7 @@ const results = await client.get("/some/route");
 > NOTE: Currently, only `express` and `axios` are supported. Other libraries can easily be added, just create an issue and/or PR!
 
 ## Specification
-
-Here is the specification as defined in [`rest-ts`](https://npmjs.com/package/rest-ts).
-
-<!-- TODO t.Mixed -->
+Here is the specification as defined in [`@graywolf/rest-ts`](https://npmjs.com/package/@graywolf/rest-ts).
 
 ```typescript
 export interface RestTSRoute {
@@ -145,7 +138,7 @@ export interface RestTSRoute {
   response?: any;
 }
 
-// This is type that your API must conform to.
+// This is the type that your API must conform to.
 // Note that you do NOT need to import this or use it in your code in any way.
 export type RestTSBase = {
   // e.g. '/orders'
@@ -157,7 +150,6 @@ export type RestTSBase = {
 ```
 
 Here is an example API that uses `params`, `query`, `body` and `response`.
-
 ```typescript
 interface User {
   email: string;
@@ -170,7 +162,7 @@ export interface SocialAPI {
     GET: {
       // Any valid HTTP method
       query: {
-        // Query string params (e.g. /me?includeProfilePics=true)
+        // Query string params (e.g. /users?includeProfilePics=true)
         includeProfilePics?: boolean;
       };
       response: User[]; // JSON response
@@ -197,10 +189,8 @@ export interface SocialAPI {
 ```
 
 ## Limitations
-
 #### No route definition guards
-
-`rest-ts-express` cannot guard against unhandled routes. If you define a get request to `/users` but forget to handle your route as such:
+`@graywolf/rest-ts-express` cannot guard against unhandled routes. If you define a get request to `/users` but forget to handle your route as such:
 
 ```typescript
 app.get('/users', () => {
@@ -211,8 +201,7 @@ app.get('/users', () => {
 No compile time error will be thrown!
 
 #### Inline parameters can't be type checked on the client
-
-`rest-ts-axios` cannot type check inline route parameters. Consider the `SocialAPI` defined above and the following example using `rest-ts-axios`:
+`@graywolf/rest-ts-axios` cannot type check inline route parameters. Consider the `SocialAPI` defined above and the following example using `@graywolf/rest-ts-axios`:
 
 ```typescript
 // ERROR: Argument of type '"/user/12345/send-message"' is not assignable to parameter of type 'never'.ts(2345)
@@ -226,17 +215,21 @@ client.post("/user/12345/send-message" as "/user/:id/send-message", { message: "
 ```
 
 ## Contributing
-
 ### Prerequisites
-
-This repository uses [lerna](https://github.com/lerna/lerna). Make sure it is installed on your machine before proceeding.
+This repository uses [lerna](https://github.com/lerna/lerna). Make sure to install the dependencies before proceeding.
+```
+npm install
+```
 
 ### Setup
-
 Install all of the dependencies and link the packages.
-
 ```
-npx lerna bootstrap
+npm run bootstrap
 ```
 
 That's it! Now you can enter the packages and make modifications :) This is an interesting library since there isn't actually any code to run.
+
+Finally, ensure the your code is correctly formatted!
+```
+npm run format:write
+```

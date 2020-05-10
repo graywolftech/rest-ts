@@ -1,13 +1,16 @@
 import exp from "express";
-import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "rest-ts";
+import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolf/rest-ts";
 
 export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "HEAD" | "DELETE" | "OPTIONS";
 
-export interface TypedRequest<T extends RestTSRoute> extends exp.Request {
-  body: T["body"];
-  params: Exclude<T["params"], undefined>;
-  query: Exclude<T["query"], undefined>;
-}
+export type TypedRequest<T extends RestTSRoute> = exp.Request<
+  Exclude<T["params"], undefined>,
+  NeverIfUnknown<T["response"]>,
+  T["body"],
+  Exclude<T["query"], undefined>
+>;
+
+export type TypedResponse<T extends RestTSRoute> = exp.Response<NeverIfUnknown<T["response"]>>;
 
 export type TypedHandler<
   API extends RestTSBase,
@@ -15,9 +18,9 @@ export type TypedHandler<
   Type extends Extract<keyof API[Path], HTTPMethod>
 > = (
   req: TypedRequest<API[Path][Type]>,
-  res: exp.Response,
+  res: TypedResponse<API[Path][Type]>,
   next: exp.NextFunction,
-) => Promise<NeverIfUnknown<API[Path][Type]["response"]>>;
+) => void;
 
 type Routes<API extends RestTSBase> = Extract<keyof API, string>;
 
@@ -26,7 +29,12 @@ type Methods<API extends RestTSBase, Path extends Routes<API>> = Extract<
   HTTPMethod
 >;
 
-interface Express<API extends RestTSBase> {
+type Application = Omit<
+  exp.Application,
+  "get" | "post" | "put" | "delete" | "patch" | "options" | "head"
+>;
+
+interface Express<API extends RestTSBase> extends Application {
   get<Path extends Routes<API>, Type extends Methods<API, Path> & "GET">(
     path: NeverOr<Type, Path>,
     handler: TypedHandler<API, Path, Type>,

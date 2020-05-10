@@ -1,7 +1,13 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
+    "format:write": "npx prettier --write .",
+    "format:check": "npx prettier --list-different ."
+  },
   "devDependencies": {
-    "lerna": "^3.20.2"
+    "lerna": "^3.20.2",
+    "prettier": "^2.0.5"
   }
 }

@@ -235,9 +235,11 @@ npm run format:write
 ```
 
 ### Releasing
-Bump the version of all of the packages at once.
+First, make sure that there is a `vX.X.X-CHANGELOG.md` in `changelogs/`. Then, bump the version of all of the packages at once!
 ```
 npx lerna version
 ```
 
 This will push a new tag to `GitHub` which will kick off the publish workflow.
+
+That's it 🔥

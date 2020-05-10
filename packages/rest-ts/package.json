@@ -22,6 +22,9 @@
   ],
   "author": "Jacob Smith <jacob.smith@unb.ca>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/graywolftech/rest-ts/issues"
   },

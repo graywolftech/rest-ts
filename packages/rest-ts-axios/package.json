@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/graywolftech/rest-ts#readme",
   "dependencies": {
-    "@graywolfai/rest-ts": "^0.1.1"
+    "@graywolfai/rest-ts": "^0.1.0"
   },
   "devDependencies": {
     "axios": "^0.19.2",

@@ -1,6 +1,6 @@
 {
   "name": "@graywolf/rest-ts-axios",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/graywolf/rest-ts#readme",
   "dependencies": {
-    "@graywolf/rest-ts": "0.1.0"
+    "@graywolf/rest-ts": "^0.1.1"
   },
   "devDependencies": {
     "axios": "^0.19.2",

@@ -1,6 +1,6 @@
 {
   "name": "@graywolf/rest-ts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The rest-ts type spec.",
   "main": "index.js",
   "module": "index.js",

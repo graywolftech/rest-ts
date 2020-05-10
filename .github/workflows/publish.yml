@@ -15,9 +15,8 @@ jobs:
       - run: npm ci
       - run: npm run bootstrap
       - run: npm run build
+      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
       - run: npx lerna publish from-git --yes
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # Removing "refs/tags/"
       - name: Get the version

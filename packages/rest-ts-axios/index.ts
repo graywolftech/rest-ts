@@ -7,7 +7,7 @@ import axios, {
   AxiosInterceptorManager,
 } from "axios";
 
-import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolf/rest-ts";
+import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolfai/rest-ts";
 
 export interface TypedAxiosRequestConfig<
   API extends RestTSBase,

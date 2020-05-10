@@ -81,10 +81,10 @@ export type RestAPI = {
 };
 ```
 
-3. Install [`@graywolf/rest-ts-express`](http://npmjs.com/package/@graywolf/rest-ts-express) in your backend.
+3. Install [`@graywolfai/rest-ts-express`](http://npmjs.com/package/@graywolfai/rest-ts-express) in your backend.
 
 ```shell
-npm install --save @graywolf/rest-ts-express express
+npm install --save @graywolfai/rest-ts-express express
 ```
 
 > Note: [`express`](https://www.npmjs.com/package/express) is a peer dependency.
@@ -103,10 +103,10 @@ app.get("/some/route", async (req) => {
 });
 ```
 
-5. Install [`@graywolf/rest-ts-axios`](http://npmjs.com/package/@graywolf/rest-ts-axios) in your frontend.
+5. Install [`@graywolfai/rest-ts-axios`](http://npmjs.com/package/@graywolfai/rest-ts-axios) in your frontend.
 
 ```shell
-npm install --save @graywolf/rest-ts-axios axios
+npm install --save @graywolfai/rest-ts-axios axios
 ```
 
 > Note: [`axios`](https://www.npmjs.com/package/axios) is a peer dependency.
@@ -128,7 +128,7 @@ const results = await client.get("/some/route");
 > NOTE: Currently, only `express` and `axios` are supported. Other libraries can easily be added, just create an issue and/or PR!
 
 ## Specification
-Here is the specification as defined in [`@graywolf/rest-ts`](https://npmjs.com/package/@graywolf/rest-ts).
+Here is the specification as defined in [`@graywolfai/rest-ts`](https://npmjs.com/package/@graywolfai/rest-ts).
 
 ```typescript
 export interface RestTSRoute {
@@ -190,7 +190,7 @@ export interface SocialAPI {
 
 ## Limitations
 #### No route definition guards
-`@graywolf/rest-ts-express` cannot guard against unhandled routes. If you define a get request to `/users` but forget to handle your route as such:
+`@graywolfai/rest-ts-express` cannot guard against unhandled routes. If you define a get request to `/users` but forget to handle your route as such:
 
 ```typescript
 app.get('/users', () => {
@@ -201,7 +201,7 @@ app.get('/users', () => {
 No compile time error will be thrown!
 
 #### Inline parameters can't be type checked on the client
-`@graywolf/rest-ts-axios` cannot type check inline route parameters. Consider the `SocialAPI` defined above and the following example using `@graywolf/rest-ts-axios`:
+`@graywolfai/rest-ts-axios` cannot type check inline route parameters. Consider the `SocialAPI` defined above and the following example using `@graywolfai/rest-ts-axios`:
 
 ```typescript
 // ERROR: Argument of type '"/user/12345/send-message"' is not assignable to parameter of type 'never'.ts(2345)
@@ -233,3 +233,11 @@ Finally, ensure the your code is correctly formatted!
 ```
 npm run format:write
 ```
+
+### Releasing
+Bump the version of all of the packages at once.
+```
+npx lerna version
+```
+
+This will push a new tag to `GitHub` which will kick off the publish workflow.

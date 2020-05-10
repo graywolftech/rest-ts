@@ -1,5 +1,5 @@
 import exp from "express";
-import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolf/rest-ts";
+import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolfai/rest-ts";
 
 export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "HEAD" | "DELETE" | "OPTIONS";
 

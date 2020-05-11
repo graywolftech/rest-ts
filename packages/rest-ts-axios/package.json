@@ -2,11 +2,10 @@
   "name": "@graywolfai/rest-ts-axios",
   "version": "0.1.2",
   "description": "",
-  "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npx tsc --outDir dist",
+    "build": "rollup --config",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -33,10 +32,14 @@
   },
   "homepage": "https://github.com/graywolftech/rest-ts#readme",
   "dependencies": {
-    "@graywolfai/rest-ts": "^0.1.2"
+    "@graywolfai/rest-ts": "^0.1.2",
+    "rollup": "^2.9.1"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^4.1.1",
     "axios": "^0.19.2",
+    "rollup": "^2.9.1",
+    "tslib": "^1.11.2",
     "typescript": "^3.8.3"
   },
   "peerDependencies": {

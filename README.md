@@ -237,8 +237,9 @@ npm run format:write
 ### Releasing
 First, make sure that there is a `vX.X.X-CHANGELOG.md` in `changelogs/`. Then, bump the version of all of the packages at once!
 ```
-npx lerna version
+npx lerna version --force-publish
 ```
+> It is important that you add `--force-publish` as we want all packages to be updated at once.
 
 This will push a new tag to `GitHub` which will kick off the publish workflow.
 

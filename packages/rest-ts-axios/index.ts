@@ -17,8 +17,11 @@ export interface TypedAxiosRequestConfig<
 > extends AxiosRequestConfig {
   url?: Type;
   method?: Type;
-  params?: NeverIfUnknown<RouteDef["params"]>;
-  query?: NeverIfUnknown<RouteDef["query"]>;
+  /**
+   * This is confusing but correct. Axios params are in the url after the "?"
+   * But to express those are "query" and "params" are in the url
+   */
+  params?: NeverIfUnknown<RouteDef["query"]>;
   data?: NeverIfUnknown<RouteDef["body"]>;
 }
 

@@ -28,11 +28,5 @@
   "bugs": {
     "url": "https://github.com/graywolftech/rest-ts/issues"
   },
-  "homepage": "https://github.com/graywolftech/rest-ts#readme",
-  "devDependencies": {
-    "axios": "^0.19.2"
-  },
-  "peerDependencies": {
-    "axios": "^0.19.2"
-  }
+  "homepage": "https://github.com/graywolftech/rest-ts#readme"
 }

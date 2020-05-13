@@ -17,7 +17,8 @@ export interface TypedAxiosRequestConfig<
 > extends AxiosRequestConfig {
   url?: Type;
   method?: Type;
-  params?: NeverIfUnknown<RouteDef["query"]>;
+  params?: NeverIfUnknown<RouteDef["params"]>;
+  query?: NeverIfUnknown<RouteDef["query"]>;
   data?: NeverIfUnknown<RouteDef["body"]>;
 }
 

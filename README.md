@@ -23,11 +23,11 @@ Subsequently, when defining your router, everything is type checked:
 
 ```typescript
 // ERROR: Argument of type '"/plan-potato"' is not assignable to parameter of type '"/plant-potato"'.ts(2345)
-app.post("/plan-potato", async (req) => {
+router.post("/plan-potato", async (req) => {
   ...
 })
 
-app.post("/plant-potato", async (req) => {
+router.post("/plant-potato", async (req) => {
   ...
   // ERROR Property 'height' does not exist on type '{ size: number; weight: number; }'. Did you mean 'weight'?ts(2551)
   plantPotato(req.body.height);
@@ -35,7 +35,7 @@ app.post("/plant-potato", async (req) => {
 });
 
 // ERROR: Type '"three-potato"' is not assignable to type '"one-potato" | "two-potato"'.ts(2345)
-app.post("/plant-potato", async (req) => {
+router.post("/plant-potato", async (req) => {
   return {
     result: "three-potato"
   }
@@ -89,17 +89,38 @@ npm install --save @graywolfai/rest-ts-express express
 
 > Note: [`express`](https://www.npmjs.com/package/express) is a peer dependency.
 
-4. Import and create your `express` app.
+4. Import and create your `express` router.
 
 ```typescript
-import express from "rest-ts-express";
+import * as express from "express";
+import { TypedAsyncRouter } from "rest-ts-express";
 import { RestAPI } from "path/to/api";
 
-const app = express<RestAPI>();
+const app = express();
+const router = TypedAsyncRouter<RestAPI>(app);
 
 // Define your routes like normal
-app.get("/some/route", async (req) => {
+router.get("/some/route", async (req) => {
   ...
+  return {
+    // Your response goes here
+    ...
+  }
+});
+```
+
+> Typically, you send your response using `router.send` or `router.json` but that doesn't work that well for type checking. How can we be *sure* that you actually return the expected response? Furthermore, using `async/await` is a *pain* as you need to [explicitly catch all errors](https://zellwk.com/blog/async-await-express/) and send them using `next(error)`. We define a light wrapper around your `async` handler to remedy both of these issues.
+
+```typescript
+// method = "get" | "post" | "put" | "delete" | "patch" | "options" | "head"
+router[method](path, (req, res, next) => {
+  handler(req, res, next)
+    .then((result) => {
+      if (!res.headersSent) {
+        res.send(result);
+      }
+    })
+    .catch(next);
 });
 ```
 

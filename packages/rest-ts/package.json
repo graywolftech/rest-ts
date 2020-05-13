@@ -1,6 +1,6 @@
 {
   "name": "@graywolfai/rest-ts",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The rest-ts type spec.",
   "main": "index.js",
   "module": "index.js",

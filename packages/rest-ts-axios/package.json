@@ -2,10 +2,11 @@
   "name": "@graywolfai/rest-ts-axios",
   "version": "0.2.0",
   "description": "",
-  "module": "dist/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup --config",
+    "build": "rollup --config && rm dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -36,7 +37,7 @@
     "rollup": "^2.9.1"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^4.1.1",
+    "@rollup/plugin-typescript": "^3.1.1",
     "axios": "^0.19.2",
     "rollup": "^2.9.1",
     "tslib": "^1.11.2",

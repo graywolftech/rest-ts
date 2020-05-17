@@ -2,7 +2,8 @@
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
-    "declaration": true
+    "declaration": true,
+    "noImplicitAny": true
   },
   "exclude": ["**/*.spec.ts", "**/dist"]
 }

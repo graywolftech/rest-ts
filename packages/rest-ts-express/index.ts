@@ -1,16 +1,19 @@
 import core from "express-serve-static-core";
+import * as t from "io-ts";
 import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolfai/rest-ts";
+import { isLeft } from "fp-ts/lib/Either";
+import { PathReporter } from "io-ts/lib/PathReporter";
 
 export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "HEAD" | "DELETE" | "OPTIONS";
 
 export type TypedRequest<T extends RestTSRoute> = core.Request<
-  Exclude<T["params"], undefined>,
-  NeverIfUnknown<T["response"]>,
-  T["body"],
-  Exclude<T["query"], undefined>
+  t.TypeOf<t.TypeC<Exclude<T["params"], undefined>>>,
+  never,
+  t.TypeOf<t.TypeC<Exclude<T["body"], undefined>>>,
+  t.TypeOf<t.TypeC<Exclude<T["query"], undefined>>>
 >;
 
-export type TypedResponse<T extends RestTSRoute> = core.Response<NeverIfUnknown<T["response"]>>;
+export type TypedResponse = core.Response<never>;
 
 export type TypedHandler<
   API extends RestTSBase,
@@ -18,9 +21,9 @@ export type TypedHandler<
   Type extends Extract<keyof API[Path], HTTPMethod>
 > = (
   req: TypedRequest<API[Path][Type]>,
-  res: TypedResponse<API[Path][Type]>,
+  res: TypedResponse,
   next: core.NextFunction,
-) => Promise<API[Path][Type]["response"]>;
+) => Promise<NeverIfUnknown<t.TypeOf<t.TypeC<API[Path][Type]["response"]>>>>;
 
 type Routes<API extends RestTSBase> = Extract<keyof API, string>;
 
@@ -63,18 +66,51 @@ export interface TypedRouter<API extends RestTSBase> {
   ): void;
 }
 
-type GenericHandler = (
-  req: core.Request,
-  res: core.Response,
-  next: core.NextFunction,
-) => Promise<void>;
-
-export const TypedAsyncRouter: <T extends RestTSBase>(router: core.Router) => TypedRouter<T> = (
-  router,
-) => {
-  const wrap = <T>(path: core.PathParams, handler: GenericHandler, method: Handlers) => {
+export const TypedAsyncRouter = <T extends RestTSBase>(
+  api: T,
+  router: core.Router,
+): TypedRouter<T> => {
+  const wrap = <Path extends Routes<T>, Type extends Methods<T, Path>>(
+    path: Path,
+    handler: TypedHandler<T, Path, Type>,
+    method: Handlers,
+  ) => {
     router[method](path, (req, res, next) => {
-      handler(req, res, next)
+      const route = api[path][method.toUpperCase()];
+      if (route.body) {
+        const result = t.type(route.body).decode(req.body);
+        if (isLeft(result)) {
+          res.status(400).send({
+            status: "error",
+            error: "Invalid body: " + PathReporter.report(result).join("\n"),
+          });
+          return;
+        }
+      }
+
+      if (route.params) {
+        const result = t.type(route.params).decode(req.params);
+        if (isLeft(result)) {
+          res.status(400).send({
+            status: "error",
+            error: "Invalid params: " + PathReporter.report(result).join("\n"),
+          });
+          return;
+        }
+      }
+
+      if (route.query) {
+        const result = t.type(route.query).decode(req.query);
+        if (isLeft(result)) {
+          res.status(400).send({
+            status: "error",
+            error: "Invalid query: " + PathReporter.report(result).join("\n"),
+          });
+          return;
+        }
+      }
+
+      handler(req as any, res, next)
         .then((result) => {
           if (!res.headersSent) {
             res.send(result);
@@ -86,13 +122,12 @@ export const TypedAsyncRouter: <T extends RestTSBase>(router: core.Router) => Ty
 
   return {
     use: router.use.bind(router),
-    // FIXME We are casting for now but eventually we can use io-ts to avoid this
-    get: (path, handler) => wrap(path, handler as GenericHandler, "get"),
-    post: (path, handler) => wrap(path, handler as GenericHandler, "post"),
-    put: (path, handler) => wrap(path, handler as GenericHandler, "put"),
-    delete: (path, handler) => wrap(path, handler as GenericHandler, "delete"),
-    patch: (path, handler) => wrap(path, handler as GenericHandler, "patch"),
-    options: (path, handler) => wrap(path, handler as GenericHandler, "options"),
-    head: (path, handler) => wrap(path, handler as GenericHandler, "head"),
+    get: (path, handler) => wrap(path, handler, "get"),
+    post: (path, handler) => wrap(path, handler, "post"),
+    put: (path, handler) => wrap(path, handler, "put"),
+    delete: (path, handler) => wrap(path, handler, "delete"),
+    patch: (path, handler) => wrap(path, handler, "patch"),
+    options: (path, handler) => wrap(path, handler, "options"),
+    head: (path, handler) => wrap(path, handler, "head"),
   };
 };

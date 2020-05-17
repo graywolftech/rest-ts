@@ -1,3 +1,4 @@
+import * as t from "io-ts";
 import axios, {
   AxiosRequestConfig,
   AxiosResponse,
@@ -6,8 +7,9 @@ import axios, {
   Method,
   AxiosInterceptorManager,
 } from "axios";
-
-import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolfai/rest-ts";
+import { PathReporter } from "io-ts/lib/PathReporter";
+import { RestTSBase, RestTSRoute, NeverOr } from "@graywolfai/rest-ts";
+import { isLeft } from "fp-ts/lib/Either";
 
 export interface TypedAxiosRequestConfig<
   API extends RestTSBase,
@@ -21,8 +23,8 @@ export interface TypedAxiosRequestConfig<
    * This is confusing but correct. Axios params are in the url after the "?"
    * But to express those are "query" and "params" are in the url
    */
-  params?: NeverIfUnknown<RouteDef["query"]>;
-  data?: NeverIfUnknown<RouteDef["body"]>;
+  params?: t.TypeOf<t.TypeC<Exclude<RouteDef["query"], undefined>>>;
+  data?: t.TypeOf<t.TypeC<Exclude<RouteDef["body"], undefined>>>;
 }
 
 export interface TypedAxiosResponse<
@@ -31,7 +33,7 @@ export interface TypedAxiosResponse<
   Type extends Extract<keyof API[Path], Method>,
   RouteDef extends RestTSRoute = API[Path][Type]
 > extends AxiosResponse {
-  data: RouteDef["response"];
+  data: t.TypeOf<t.TypeC<Exclude<RouteDef["response"], undefined>>>;
   config: TypedAxiosRequestConfig<API, Path, Type>;
 }
 
@@ -98,14 +100,14 @@ export interface TypedAxiosInstance<API extends RestTSBase> {
 }
 
 export interface TypedAxiosStatic extends TypedAxiosInstance<any> {
-  create<T extends RestTSBase>(config?: AxiosRequestConfig): TypedAxiosInstance<T>;
+  create<T extends RestTSBase>(api: T, config?: AxiosRequestConfig): TypedAxiosInstance<T>;
   /**
    * This is a special function which wraps get, post, path, etc to always return a response even
    * if an error occurs (e.g. a 400).
    *
    * @param config The typical axios config object.
    */
-  createWrapped<T extends RestTSBase>(config?: AxiosRequestConfig): TypedAxiosInstance<T>;
+  // createWrapped<T extends RestTSBase>(config?: AxiosRequestConfig): TypedAxiosInstance<T>;
   Cancel: CancelStatic;
   CancelToken: CancelTokenStatic;
   isCancel(value: any): boolean;
@@ -113,97 +115,62 @@ export interface TypedAxiosStatic extends TypedAxiosInstance<any> {
   spread<T, R>(callback: (...args: T[]) => R): (array: T[]) => R;
 }
 
-const wrap = <T extends (...args: any[]) => any>(f: T) => {
-  return async (...args: any[]) => {
-    try {
-      return await f(...args);
-    } catch (e) {
-      if (e.response) {
-        return e.response;
-      }
+const wrap = <T extends (...args: any[]) => Promise<AxiosResponse<any>>>(api: RestTSBase, f: T) => {
+  return async (...args: any[]): Promise<any> => {
+    const res = await f(...args);
 
-      throw e;
+    // This is a kinda messy if/else blocks
+    // Basically if the url and method are defined (I'm not sure when this would not occur)
+    // and if the route and route.response are defined, decode the incoming data and raise
+    // and error if the data is not the expected format!
+    // We also warn if res.config.url or res.config.method are undefined
+    // Or if we can't find the route object to help us validate the response data
+    if (res.config.url && res.config.method) {
+      const route = api[res.config.url]
+        ? api[res.config.url][res.config.method.toUpperCase()]
+        : undefined;
+
+      if (route && route.response) {
+        const result = t.type(route.response).decode(res.data);
+        if (isLeft(result)) {
+          throw Error(
+            `Data validation failed for "${res.config.url}": ${PathReporter.report(result).join(
+              "\n",
+            )}`,
+          );
+        }
+      } else if (!route) {
+        process.env.NODE_ENV !== "production" &&
+          console.warn(
+            `[rest-ts-axios] Unable to verify response for "${res.config.url}": Missing route definition!`,
+          );
+      }
+    } else {
+      process.env.NODE_ENV !== "production" &&
+        console.warn("[rest-ts-axios] Unable to verify response for " + res.config.url);
     }
+
+    return res;
   };
 };
 
-const createWrapped = <T extends RestTSBase>(
+const axiosCreate = axios.create.bind(axios);
+
+const create = <T extends RestTSBase>(
+  api: T,
   config?: AxiosRequestConfig,
 ): TypedAxiosInstance<T> => {
-  const client = axios.create(config);
-  client.request = wrap(client.request);
-  client.get = wrap(client.get);
-  client.post = wrap(client.post);
-  client.delete = wrap(client.delete);
-  client.patch = wrap(client.patch);
-  client.put = wrap(client.put);
-  client.head = wrap(client.head);
+  const client = axiosCreate(config);
+  client.request = wrap(api, client.request);
+  client.get = wrap(api, client.get);
+  client.post = wrap(api, client.post);
+  client.delete = wrap(api, client.delete);
+  client.patch = wrap(api, client.patch);
+  client.put = wrap(api, client.put);
+  client.head = wrap(api, client.head);
   return client;
 };
 
-const TypedAxios: TypedAxiosStatic = Object.assign(axios, { createWrapped });
-
-// const t = TypedAxios.create<{ "/test": { GET: { body: { id: string } } } }>({});
-// t.get("/test", {
-//   data: {
-//     id: "",
-//   },
-// });
-
-// t.post("/test", {
-//   data: {
-//     id: "",
-//   },
-// });
-
-// export type API = {
-//   "/plant-potato": {
-//     POST: {
-//       body: { size: number; weight: number };
-//       response: { result: "one-potato" | "two-potato" };
-//     };
-//   };
-// };
-
-// type T = TypedAxiosResponse<API, "/plant-potato", "POST">;
-
-// interface User {
-//   email: string;
-//   name: string;
-// }
-
-// export type SocialAPI =  {
-//   "/users": {
-//     // Route name (without prefix, if you have one)
-//     GET: {
-//       // Any valid HTTP method
-//       query: {
-//         // Query string params (e.g. /me?includeProfilePics=true)
-//         includeProfilePics?: boolean;
-//       };
-//       response: User[]; // JSON response
-//     };
-//   };
-
-//   "/user/:id/send-message": {
-//     POST: {
-//       params: {
-//         // Inline route params
-//         id: string;
-//       };
-//       body: {
-//         // JSON request body
-//         message: string;
-//       };
-//       response: {
-//         // JSON response
-//         success: boolean;
-//       };
-//     };
-//   };
-// }
-
-// const client = TypedAxios.create<SocialAPI>({ baseURL: '' });
-// client.post("/user/12345/send-message" as "/user/:id/send-message", { message: "some message" });
+const TypedAxios: TypedAxiosStatic = Object.assign(axios, { create });
 
 export default TypedAxios;

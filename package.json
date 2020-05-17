@@ -4,6 +4,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
     "build": "lerna run build",
+    "test": "lerna run test",
     "format:write": "npx prettier --write .",
     "format:check": "npx prettier --list-different ."
   },

@@ -1,11 +1,13 @@
+import * as t from "io-ts";
+
 // DO NOT USE THIS LIBRARY
 // It is only for the router and client libraries
 // You simply need to define your types such that they conform to this specification
 export interface RestTSRoute {
-  params?: { [k: string]: string };
-  query?: { [k: string]: string };
-  body?: any;
-  response?: any;
+  params?: Record<string, t.StringC>;
+  query?: Record<string, t.StringC>;
+  body?: t.Props;
+  response?: t.Props;
 }
 
 export type RestTSBase = {

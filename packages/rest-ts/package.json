@@ -7,7 +7,7 @@
   "types": "index.d.ts",
   "scripts": {
     "build": "echo No build step for \"rest-ts\"!",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "repository": {
     "type": "git",
@@ -28,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/graywolftech/rest-ts/issues"
   },
-  "homepage": "https://github.com/graywolftech/rest-ts#readme"
+  "homepage": "https://github.com/graywolftech/rest-ts#readme",
+  "peerDependencies": {
+    "io-ts": "^2.2.2"
+  }
 }

@@ -23,6 +23,9 @@ const api = {
   },
   "/plant-potato": {
     POST: {
+      body: t.type({
+        size: t.number,
+      }),
       response: t.type({
         status: t.literal(200),
       }),
@@ -55,7 +58,7 @@ describe("io-ts", () => {
 
   test("catches bad response data", async () => {
     try {
-      await client.post("/plant-potato");
+      await client.post("/plant-potato", { size: 500 }, {});
       throw Error("BAD");
     } catch (e) {
       expect(e.message).toEqual(

@@ -11,6 +11,15 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { RestTSBase, RestTSRoute, NeverOr } from "@graywolfai/rest-ts";
 import { isLeft } from "fp-ts/lib/Either";
 
+/**
+ * A helper function to access types of your routes.
+ * @since 0.3.0
+ */
+export type TypeOf<C extends t.Any> = t.TypeOf<C>;
+
+/**
+ * @since 0.1.0
+ */
 export interface TypedAxiosRequestConfig<
   API extends RestTSBase,
   Path extends Extract<keyof API, string>,
@@ -27,6 +36,9 @@ export interface TypedAxiosRequestConfig<
   data?: t.TypeOf<Exclude<RouteDef["body"], undefined>>;
 }
 
+/**
+ * @since 0.1.0
+ */
 export interface TypedAxiosResponse<
   API extends RestTSBase,
   Path extends Extract<keyof API, string>,
@@ -37,6 +49,9 @@ export interface TypedAxiosResponse<
   config: TypedAxiosRequestConfig<API, Path, Type>;
 }
 
+/**
+ * @since 0.1.0
+ */
 export interface TypedAxiosInstance<API extends RestTSBase> {
   request<Path extends Extract<keyof API, string>, Type extends Extract<keyof API[Path], Method>>(
     config: TypedAxiosRequestConfig<API, Path, Type>,
@@ -71,7 +86,7 @@ export interface TypedAxiosInstance<API extends RestTSBase> {
     Type extends Extract<keyof API[Path], Method> & "POST"
   >(
     url: NeverOr<Type, Path>,
-    data?: API[Path][Type]["body"],
+    data?: t.TypeOf<API[Path][Type]["body"]>,
     config?: TypedAxiosRequestConfig<API, Path, Type>,
   ): Promise<TypedAxiosResponse<API, Path, Type>>;
 
@@ -80,7 +95,7 @@ export interface TypedAxiosInstance<API extends RestTSBase> {
     Type extends Extract<keyof API[Path], Method> & "PUT"
   >(
     url: NeverOr<Type, Path>,
-    data?: API[Path][Type]["body"],
+    data?: t.TypeOf<API[Path][Type]["body"]>,
     config?: TypedAxiosRequestConfig<API, Path, Type>,
   ): Promise<TypedAxiosResponse<API, Path, Type>>;
 
@@ -89,7 +104,7 @@ export interface TypedAxiosInstance<API extends RestTSBase> {
     Type extends Extract<keyof API[Path], Method> & "PATCH"
   >(
     url: NeverOr<Type, Path>,
-    data?: API[Path][Type]["body"],
+    data?: t.TypeOf<API[Path][Type]["body"]>,
     config?: TypedAxiosRequestConfig<API, Path, Type>,
   ): Promise<TypedAxiosResponse<API, Path, Type>>;
 
@@ -99,6 +114,9 @@ export interface TypedAxiosInstance<API extends RestTSBase> {
   };
 }
 
+/**
+ * @since 0.1.0
+ */
 export interface TypedAxiosStatic extends TypedAxiosInstance<any> {
   create<T extends RestTSBase>(api: T, config?: AxiosRequestConfig): TypedAxiosInstance<T>;
   /**
@@ -173,4 +191,7 @@ const create = <T extends RestTSBase>(
 
 const TypedAxios: TypedAxiosStatic = Object.assign(axios, { create });
 
+/**
+ * @since 0.1.0
+ */
 export default TypedAxios;

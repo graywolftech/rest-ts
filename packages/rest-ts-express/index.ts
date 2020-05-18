@@ -4,8 +4,20 @@ import { RestTSBase, RestTSRoute, NeverOr, NeverIfUnknown } from "@graywolfai/re
 import { isLeft } from "fp-ts/lib/Either";
 import { PathReporter } from "io-ts/lib/PathReporter";
 
+/**
+ * A helper function to access types of your routes.
+ * @since 0.3.0
+ */
+export type TypeOf<C extends t.Any> = t.TypeOf<C>;
+
+/**
+ * @since 0.1.0
+ */
 export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "HEAD" | "DELETE" | "OPTIONS";
 
+/**
+ * @since 0.1.0
+ */
 export type TypedRequest<T extends RestTSRoute> = core.Request<
   t.TypeOf<Exclude<T["params"], undefined>>,
   never,
@@ -13,8 +25,14 @@ export type TypedRequest<T extends RestTSRoute> = core.Request<
   t.TypeOf<Exclude<T["query"], undefined>>
 >;
 
+/**
+ * @since 0.1.0
+ */
 export type TypedResponse = core.Response<never>;
 
+/**
+ * @since 0.1.0
+ */
 export type TypedHandler<
   API extends RestTSBase,
   Path extends Extract<keyof API, string>,
@@ -25,15 +43,27 @@ export type TypedHandler<
   next: core.NextFunction,
 ) => Promise<NeverIfUnknown<t.TypeOf<API[Path][Type]["response"]>>>;
 
-type Routes<API extends RestTSBase> = Extract<keyof API, string>;
+/**
+ * @since 0.1.0
+ */
+export type Routes<API extends RestTSBase> = Extract<keyof API, string>;
 
+/**
+ * @since 0.1.0
+ */
 type Methods<API extends RestTSBase, Path extends Routes<API>> = Extract<
   keyof API[Path],
   HTTPMethod
 >;
 
-type Handlers = "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
+/**
+ * @since 0.1.0
+ */
+export type Handlers = "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
 
+/**
+ * @since 0.1.0
+ */
 export interface TypedRouter<API extends RestTSBase> {
   use: core.ApplicationRequestHandler<void>;
   get<Path extends Routes<API>, Type extends Methods<API, Path> & "GET">(
@@ -66,6 +96,9 @@ export interface TypedRouter<API extends RestTSBase> {
   ): void;
 }
 
+/**
+ * @since 0.1.0
+ */
 export const TypedAsyncRouter = <T extends RestTSBase>(
   api: T,
   router: core.Router,

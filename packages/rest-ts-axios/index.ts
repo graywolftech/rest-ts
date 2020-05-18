@@ -23,8 +23,8 @@ export interface TypedAxiosRequestConfig<
    * This is confusing but correct. Axios params are in the url after the "?"
    * But to express those are "query" and "params" are in the url
    */
-  params?: t.TypeOf<t.TypeC<Exclude<RouteDef["query"], undefined>>>;
-  data?: t.TypeOf<t.TypeC<Exclude<RouteDef["body"], undefined>>>;
+  params?: t.TypeOf<Exclude<RouteDef["query"], undefined>>;
+  data?: t.TypeOf<Exclude<RouteDef["body"], undefined>>;
 }
 
 export interface TypedAxiosResponse<
@@ -33,7 +33,7 @@ export interface TypedAxiosResponse<
   Type extends Extract<keyof API[Path], Method>,
   RouteDef extends RestTSRoute = API[Path][Type]
 > extends AxiosResponse {
-  data: t.TypeOf<t.TypeC<Exclude<RouteDef["response"], undefined>>>;
+  data: t.TypeOf<Exclude<RouteDef["response"], undefined>>;
   config: TypedAxiosRequestConfig<API, Path, Type>;
 }
 
@@ -131,7 +131,7 @@ const wrap = <T extends (...args: any[]) => Promise<AxiosResponse<any>>>(api: Re
         : undefined;
 
       if (route && route.response) {
-        const result = t.type(route.response).decode(res.data);
+        const result = route.response.decode(res.data);
         if (isLeft(result)) {
           throw Error(
             `Data validation failed for "${res.config.url}": ${PathReporter.report(result).join(

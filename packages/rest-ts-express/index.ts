@@ -7,10 +7,10 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "HEAD" | "DELETE" | "OPTIONS";
 
 export type TypedRequest<T extends RestTSRoute> = core.Request<
-  t.TypeOf<t.TypeC<Exclude<T["params"], undefined>>>,
+  t.TypeOf<Exclude<T["params"], undefined>>,
   never,
-  t.TypeOf<t.TypeC<Exclude<T["body"], undefined>>>,
-  t.TypeOf<t.TypeC<Exclude<T["query"], undefined>>>
+  t.TypeOf<Exclude<T["body"], undefined>>,
+  t.TypeOf<Exclude<T["query"], undefined>>
 >;
 
 export type TypedResponse = core.Response<never>;
@@ -23,7 +23,7 @@ export type TypedHandler<
   req: TypedRequest<API[Path][Type]>,
   res: TypedResponse,
   next: core.NextFunction,
-) => Promise<NeverIfUnknown<t.TypeOf<t.TypeC<API[Path][Type]["response"]>>>>;
+) => Promise<NeverIfUnknown<t.TypeOf<API[Path][Type]["response"]>>>;
 
 type Routes<API extends RestTSBase> = Extract<keyof API, string>;
 
@@ -78,7 +78,7 @@ export const TypedAsyncRouter = <T extends RestTSBase>(
     router[method](path, (req, res, next) => {
       const route = api[path][method.toUpperCase()];
       if (route.body) {
-        const result = t.type(route.body).decode(req.body);
+        const result = route.body.decode(req.body);
         if (isLeft(result)) {
           res.status(400).send({
             status: "error",
@@ -89,7 +89,7 @@ export const TypedAsyncRouter = <T extends RestTSBase>(
       }
 
       if (route.params) {
-        const result = t.type(route.params).decode(req.params);
+        const result = route.params.decode(req.params);
         if (isLeft(result)) {
           res.status(400).send({
             status: "error",
@@ -100,7 +100,7 @@ export const TypedAsyncRouter = <T extends RestTSBase>(
       }
 
       if (route.query) {
-        const result = t.type(route.query).decode(req.query);
+        const result = route.query.decode(req.query);
         if (isLeft(result)) {
           res.status(400).send({
             status: "error",

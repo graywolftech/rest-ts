@@ -30,33 +30,33 @@ const router = TypedAsyncRouter(
   {
     "/plant-potato/:id": {
       POST: {
-        params: {
+        params: t.type({
           identifier: t.string,
-        },
-        response: {
+        }),
+        response: t.type({
           status: t.literal(200),
-        },
+        }),
       },
     },
     "/plant-potato": {
       POST: {
-        query: {
+        query: t.type({
           weight: t.string,
-        },
-        body: {
+        }),
+        body: t.type({
           id: t.string,
-        },
-        response: {
+        }),
+        response: t.type({
           status: t.literal(200),
-        },
+        }),
       },
     },
     "/potatoes": {
       GET: {
-        response: {
+        response: t.type({
           status: t.literal(200),
           potatoes: t.array(t.type({ size: t.number })),
-        },
+        }),
       },
     },
   },

@@ -29,6 +29,6 @@ jobs:
           name: ${{ steps.get_version.outputs.VERSION }}
           body_path: changelogs/${{ steps.get_version.outputs.VERSION }}-CHANGELOG.md
           tag_name: ${{ steps.get_version.outputs.VERSION }}
-          prerelease: contains(github.ref, 'alpha')
+          prerelease: ${{ contains(github.ref, 'alpha') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -3,7 +3,7 @@
 // You simply need to define your types such that they conform to this specification
 export interface RestTSRoute {
   params?: { [k: string]: string };
-  query?: { [k: string]: string };
+  query?: { [k: string]: string | undefined };
   body?: any;
   response?: any;
 }

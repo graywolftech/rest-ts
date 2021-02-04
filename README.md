@@ -184,7 +184,7 @@ export interface SocialAPI {
       // Any valid HTTP method
       query: {
         // Query string params (e.g. /users?includeProfilePics=true)
-        includeProfilePics?: boolean;
+        includeProfilePics?: "true" | "false";
       };
       response: User[]; // JSON response
     };

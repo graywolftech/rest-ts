@@ -179,7 +179,7 @@ const TypedAxios: TypedAxiosStatic = Object.assign(axios, { createWrapped });
 //       // Any valid HTTP method
 //       query: {
 //         // Query string params (e.g. /me?includeProfilePics=true)
-//         includeProfilePics?: boolean;
+//         includeProfilePics?: "true" | "false";
 //       };
 //       response: User[]; // JSON response
 //     };
@@ -205,5 +205,6 @@ const TypedAxios: TypedAxiosStatic = Object.assign(axios, { createWrapped });
 
 // const client = TypedAxios.create<SocialAPI>({ baseURL: '' });
 // client.post("/user/12345/send-message" as "/user/:id/send-message", { message: "some message" });
+// client.get("/users", { params: { } })
 
 export default TypedAxios;
